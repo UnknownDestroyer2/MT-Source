@@ -37,12 +37,21 @@ EEEEEEEEEEEEEEEEEEEEEEzzzzzzzzzzzzzzzzzHHHHHHHHH     HHHHHHHHH  aaaaaaaaaa  aaaa
 v{VERSION} by {AUTHOR}
 """
 
+NOTICE = (
+    "⚠️ IMPORTANT NOTICE ⚠️\n"
+    "EZHACK WILL BECOME A COMPLETELY NEW TOOL IN THE FUTURE.\n"
+    "THIS FILE MAY BE AUTOMATICALLY DELETED SOON.\n"
+    "IF YOU NOTICE THAT SUBSCANNER IS NOT WORKING LATER,\n"
+    "IT MEANS THE TOOL IS BEING REPLACED WITH THE NEW VERSION!\n"
+)
+
 def clear_terminal():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def print_help():
     clear_terminal()
     print(BANNER)
+    print(f"{Fore.RED}{NOTICE}{Style.RESET_ALL}")
     print(f"{Fore.YELLOW}Usage: subscanner.py -d DOMAIN [-o OUTPUT_FILE]{Style.RESET_ALL}")
     print("\nOptions:")
     print(f"{Fore.GREEN}{'-d, --domain':<20}{Style.RESET_ALL} Target domain to scan (required)")
@@ -175,6 +184,7 @@ def main():
 
     clear_terminal()
     print(BANNER)
+    print(f"{Fore.RED}{NOTICE}{Style.RESET_ALL}")
     print(f"{Fore.YELLOW}[*] Starting scan for: {args.domain}{Style.RESET_ALL}")
     
     subdomains = set()
@@ -203,3 +213,4 @@ if __name__ == "__main__":
         print(f"\n{Fore.RED}[!] Scan paused by user{Style.RESET_ALL}")
     except Exception as e:
         print(f"\n{Fore.RED}[!] Unexpected error: {str(e)}{Style.RESET_ALL}")
+
