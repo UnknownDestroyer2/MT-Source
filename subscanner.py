@@ -89,7 +89,7 @@ def get_dnsdumpster_subdomains(domain):
         csrf_input = soup.find('input', {'name': 'csrfmiddlewaretoken'})
         
         if not csrf_input:
-            print(f"{Fore.RED}[!] DNSDumpster CSRF token bulunamadı{Style.RESET_ALL}")
+            print(f"{Fore.RED}[!] Failed to find DNSDumpster CSRF Token{Style.RESET_ALL}")
             return subdomains
             
         csrf = csrf_input['value']
@@ -213,4 +213,5 @@ if __name__ == "__main__":
         print(f"\n{Fore.RED}[!] Scan paused by user{Style.RESET_ALL}")
     except Exception as e:
         print(f"\n{Fore.RED}[!] Unexpected error: {str(e)}{Style.RESET_ALL}")
+
 
