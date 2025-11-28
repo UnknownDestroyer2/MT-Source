@@ -1,10 +1,64 @@
 import os
+import requests
+import json
 from colorama import Fore, Style, init
 
 init(autoreset=True)
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
+
+def get_repo_files():
+    try:
+        repo_api = "https://api.github.com/repos/UnknownDestroyer2/MT-Source/contents/"
+        response = requests.get(repo_api, timeout=10)
+        response.raise_for_status()
+        files = response.json()
+        
+        file_list = []
+        for file_info in files:
+            if file_info.get("type") == "file":
+                file_list.append(file_info.get("name"))
+        return file_list
+    except Exception as e:
+        print(Fore.RED + f"✗ Failed to fetch repo files: {e}")
+        return []
+
+def remove_all_installed_files():
+    try:
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        repo_files = get_repo_files()
+        
+        if not repo_files:
+            print(Fore.YELLOW + "Could not fetch repo file list, using fallback method")
+            repo_files = [
+                "cms_detector.py", "dns_resolver.py", "harvester.py", 
+                "port_scanner.py", "proxssscanner.py", "reverse_ip_lookup.py",
+                "sqlinjectscanner.py", "subscanner.py", "usernameosint.py",
+                "vulnerability_scanner.py", "whois.py"
+            ]
+        
+        removed_count = 0
+        current_script = os.path.basename(__file__)
+        
+        for filename in repo_files:
+            if filename == current_script:
+                continue
+                
+            file_path = os.path.join(current_dir, filename)
+            if os.path.exists(file_path):
+                try:
+                    os.remove(file_path)
+                    print(Fore.GREEN + f"✓ Removed {filename}")
+                    removed_count += 1
+                except Exception as e:
+                    print(Fore.RED + f"✗ Failed to remove {filename}: {e}")
+        
+        return removed_count
+        
+    except Exception as e:
+        print(Fore.RED + f"✗ Error removing installed files: {e}")
+        return 0
 
 def remove_startup_shortcut():
     try:
@@ -33,39 +87,6 @@ def remove_updater_files():
     except Exception as e:
         print(Fore.RED + f"✗ Failed to remove updater files: {e}")
 
-def remove_downloaded_tools():
-    try:
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        current_script = os.path.basename(__file__)
-        
-        tool_files = [
-            "cms_detector.py",
-            "dns_resolver.py", 
-            "harvester.py",
-            "port_scanner.py",
-            "proxssscanner.py",
-            "reverse_ip_lookup.py",
-            "sqlinjectscanner.py",
-            "subscanner.py",
-            "usernameosint.py",
-            "vulnerability_scanner.py",
-            "whois.py"
-        ]
-        
-        removed_count = 0
-        for tool_file in tool_files:
-            tool_path = os.path.join(current_dir, tool_file)
-            if os.path.exists(tool_path) and tool_file != current_script:
-                os.remove(tool_path)
-                print(Fore.GREEN + f"✓ Removed {tool_file}")
-                removed_count += 1
-        
-        if removed_count == 0:
-            print(Fore.YELLOW + "No tool files found to remove")
-            
-    except Exception as e:
-        print(Fore.RED + f"✗ Failed to remove tool files: {e}")
-
 def remove_main_script():
     try:
         current_script = os.path.abspath(__file__)
@@ -87,11 +108,11 @@ def revert_installation():
     print(Fore.RED + "\nStarting removal process...")
     
     remove_startup_shortcut()
-    remove_updater_files() 
-    remove_downloaded_tools()
+    remove_updater_files()
+    files_removed = remove_all_installed_files()
     script_to_delete = remove_main_script()
     
-    print(Fore.GREEN + Style.BRIGHT + "\n✓ Revert completed!")
+    print(Fore.GREEN + Style.BRIGHT + f"\n✓ Revert completed! Removed {files_removed} files.")
     print(Fore.YELLOW + "The MultiTool has been completely removed from your system.")
     
     if script_to_delete:
